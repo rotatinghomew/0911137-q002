@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools==75.8.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "renewal-value"
+version = "0.1.0"
+description = "订阅客户经营台"
+requires-python = ">=3.11,<3.12"
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["renewal_value*"]
+
+[tool.unittest]
+start-directory = "tests"
