@@ -23,8 +23,8 @@
   "spell": "a000-1",
   "account": "a000",
   "start": 1,
-  "end": 5,
-  "status": "ended",
+  "end": null,
+  "status": "active",
   "known_at": 1
 }
 ```
