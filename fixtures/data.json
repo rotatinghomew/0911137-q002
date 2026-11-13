@@ -419,9 +419,17 @@
         "spell": "a000-1",
         "account": "a000",
         "start": 1,
+        "end": null,
+        "status": "active",
+        "known_at": 1
+      },
+      {
+        "spell": "a000-1",
+        "account": "a000",
+        "start": 1,
         "end": 5,
         "status": "ended",
-        "known_at": 1
+        "known_at": 5
       },
       {
         "spell": "a000-2",
@@ -451,9 +459,17 @@
         "spell": "a003-1",
         "account": "a003",
         "start": 4,
+        "end": null,
+        "status": "active",
+        "known_at": 4
+      },
+      {
+        "spell": "a003-1",
+        "account": "a003",
+        "start": 4,
         "end": 11,
         "status": "ended",
-        "known_at": 4
+        "known_at": 11
       },
       {
         "spell": "a004-1",
@@ -475,9 +491,17 @@
         "spell": "a006-1",
         "account": "a006",
         "start": 7,
+        "end": null,
+        "status": "active",
+        "known_at": 7
+      },
+      {
+        "spell": "a006-1",
+        "account": "a006",
+        "start": 7,
         "end": 12,
         "status": "ended",
-        "known_at": 7
+        "known_at": 12
       },
       {
         "spell": "a006-2",
@@ -507,9 +531,17 @@
         "spell": "a009-1",
         "account": "a009",
         "start": 10,
+        "end": null,
+        "status": "active",
+        "known_at": 10
+      },
+      {
+        "spell": "a009-1",
+        "account": "a009",
+        "start": 10,
         "end": 18,
         "status": "ended",
-        "known_at": 10
+        "known_at": 18
       },
       {
         "spell": "a010-1",
@@ -531,9 +563,17 @@
         "spell": "a012-1",
         "account": "a012",
         "start": 13,
+        "end": null,
+        "status": "active",
+        "known_at": 13
+      },
+      {
+        "spell": "a012-1",
+        "account": "a012",
+        "start": 13,
         "end": 19,
         "status": "ended",
-        "known_at": 13
+        "known_at": 19
       },
       {
         "spell": "a012-2",
@@ -563,9 +603,17 @@
         "spell": "a015-1",
         "account": "a015",
         "start": 16,
+        "end": null,
+        "status": "active",
+        "known_at": 16
+      },
+      {
+        "spell": "a015-1",
+        "account": "a015",
+        "start": 16,
         "end": 20,
         "status": "ended",
-        "known_at": 16
+        "known_at": 20
       },
       {
         "spell": "a016-1",
@@ -587,9 +635,17 @@
         "spell": "a018-1",
         "account": "a018",
         "start": 1,
+        "end": null,
+        "status": "active",
+        "known_at": 1
+      },
+      {
+        "spell": "a018-1",
+        "account": "a018",
+        "start": 1,
         "end": 8,
         "status": "ended",
-        "known_at": 1
+        "known_at": 8
       },
       {
         "spell": "a018-2",
@@ -619,9 +675,17 @@
         "spell": "a021-1",
         "account": "a021",
         "start": 4,
+        "end": null,
+        "status": "active",
+        "known_at": 4
+      },
+      {
+        "spell": "a021-1",
+        "account": "a021",
+        "start": 4,
         "end": 9,
         "status": "ended",
-        "known_at": 4
+        "known_at": 9
       },
       {
         "spell": "a022-1",
@@ -643,9 +707,17 @@
         "spell": "a024-1",
         "account": "a024",
         "start": 7,
+        "end": null,
+        "status": "active",
+        "known_at": 7
+      },
+      {
+        "spell": "a024-1",
+        "account": "a024",
+        "start": 7,
         "end": 15,
         "status": "ended",
-        "known_at": 7
+        "known_at": 15
       },
       {
         "spell": "a024-2",
@@ -675,9 +747,17 @@
         "spell": "a027-1",
         "account": "a027",
         "start": 10,
+        "end": null,
+        "status": "active",
+        "known_at": 10
+      },
+      {
+        "spell": "a027-1",
+        "account": "a027",
+        "start": 10,
         "end": 16,
         "status": "ended",
-        "known_at": 10
+        "known_at": 16
       },
       {
         "spell": "a028-1",
@@ -699,9 +779,17 @@
         "spell": "a030-1",
         "account": "a030",
         "start": 13,
+        "end": null,
+        "status": "active",
+        "known_at": 13
+      },
+      {
+        "spell": "a030-1",
+        "account": "a030",
+        "start": 13,
         "end": 17,
         "status": "ended",
-        "known_at": 13
+        "known_at": 17
       },
       {
         "spell": "a030-2",
@@ -731,9 +819,17 @@
         "spell": "a033-1",
         "account": "a033",
         "start": 16,
+        "end": null,
+        "status": "active",
+        "known_at": 16
+      },
+      {
+        "spell": "a033-1",
+        "account": "a033",
+        "start": 16,
         "end": 23,
         "status": "ended",
-        "known_at": 16
+        "known_at": 23
       },
       {
         "spell": "a034-1",
@@ -755,9 +851,17 @@
         "spell": "a036-1",
         "account": "a036",
         "start": 1,
+        "end": null,
+        "status": "active",
+        "known_at": 1
+      },
+      {
+        "spell": "a036-1",
+        "account": "a036",
+        "start": 1,
         "end": 6,
         "status": "ended",
-        "known_at": 1
+        "known_at": 6
       },
       {
         "spell": "a036-2",
@@ -787,9 +891,17 @@
         "spell": "a039-1",
         "account": "a039",
         "start": 4,
+        "end": null,
+        "status": "active",
+        "known_at": 4
+      },
+      {
+        "spell": "a039-1",
+        "account": "a039",
+        "start": 4,
         "end": 12,
         "status": "ended",
-        "known_at": 4
+        "known_at": 12
       },
       {
         "spell": "a040-1",
@@ -811,9 +923,17 @@
         "spell": "a042-1",
         "account": "a042",
         "start": 7,
+        "end": null,
+        "status": "active",
+        "known_at": 7
+      },
+      {
+        "spell": "a042-1",
+        "account": "a042",
+        "start": 7,
         "end": 13,
         "status": "ended",
-        "known_at": 7
+        "known_at": 13
       },
       {
         "spell": "a042-2",
@@ -843,9 +963,17 @@
         "spell": "a045-1",
         "account": "a045",
         "start": 10,
+        "end": null,
+        "status": "active",
+        "known_at": 10
+      },
+      {
+        "spell": "a045-1",
+        "account": "a045",
+        "start": 10,
         "end": 14,
         "status": "ended",
-        "known_at": 10
+        "known_at": 14
       },
       {
         "spell": "a046-1",
@@ -867,9 +995,17 @@
         "spell": "a048-1",
         "account": "a048",
         "start": 13,
+        "end": null,
+        "status": "active",
+        "known_at": 13
+      },
+      {
+        "spell": "a048-1",
+        "account": "a048",
+        "start": 13,
         "end": 20,
         "status": "ended",
-        "known_at": 13
+        "known_at": 20
       },
       {
         "spell": "a048-2",
@@ -899,9 +1035,17 @@
         "spell": "a051-1",
         "account": "a051",
         "start": 16,
+        "end": null,
+        "status": "active",
+        "known_at": 16
+      },
+      {
+        "spell": "a051-1",
+        "account": "a051",
+        "start": 16,
         "end": 21,
         "status": "ended",
-        "known_at": 16
+        "known_at": 21
       },
       {
         "spell": "a052-1",
@@ -923,9 +1067,17 @@
         "spell": "a054-1",
         "account": "a054",
         "start": 1,
+        "end": null,
+        "status": "active",
+        "known_at": 1
+      },
+      {
+        "spell": "a054-1",
+        "account": "a054",
+        "start": 1,
         "end": 9,
         "status": "ended",
-        "known_at": 1
+        "known_at": 9
       },
       {
         "spell": "a054-2",
@@ -955,9 +1107,17 @@
         "spell": "a057-1",
         "account": "a057",
         "start": 4,
+        "end": null,
+        "status": "active",
+        "known_at": 4
+      },
+      {
+        "spell": "a057-1",
+        "account": "a057",
+        "start": 4,
         "end": 10,
         "status": "ended",
-        "known_at": 4
+        "known_at": 10
       },
       {
         "spell": "a058-1",
@@ -979,9 +1139,17 @@
         "spell": "a060-1",
         "account": "a060",
         "start": 7,
+        "end": null,
+        "status": "active",
+        "known_at": 7
+      },
+      {
+        "spell": "a060-1",
+        "account": "a060",
+        "start": 7,
         "end": 11,
         "status": "ended",
-        "known_at": 7
+        "known_at": 11
       },
       {
         "spell": "a060-2",
@@ -1011,9 +1179,17 @@
         "spell": "a063-1",
         "account": "a063",
         "start": 10,
+        "end": null,
+        "status": "active",
+        "known_at": 10
+      },
+      {
+        "spell": "a063-1",
+        "account": "a063",
+        "start": 10,
         "end": 17,
         "status": "ended",
-        "known_at": 10
+        "known_at": 17
       },
       {
         "spell": "a064-1",
@@ -1035,9 +1211,17 @@
         "spell": "a066-1",
         "account": "a066",
         "start": 13,
+        "end": null,
+        "status": "active",
+        "known_at": 13
+      },
+      {
+        "spell": "a066-1",
+        "account": "a066",
+        "start": 13,
         "end": 18,
         "status": "ended",
-        "known_at": 13
+        "known_at": 18
       },
       {
         "spell": "a066-2",
@@ -1067,9 +1251,17 @@
         "spell": "a069-1",
         "account": "a069",
         "start": 16,
+        "end": null,
+        "status": "active",
+        "known_at": 16
+      },
+      {
+        "spell": "a069-1",
+        "account": "a069",
+        "start": 16,
         "end": 24,
         "status": "ended",
-        "known_at": 16
+        "known_at": 24
       },
       {
         "spell": "a070-1",
@@ -1091,9 +1283,17 @@
         "spell": "a072-1",
         "account": "a072",
         "start": 1,
+        "end": null,
+        "status": "active",
+        "known_at": 1
+      },
+      {
+        "spell": "a072-1",
+        "account": "a072",
+        "start": 1,
         "end": 7,
         "status": "ended",
-        "known_at": 1
+        "known_at": 7
       },
       {
         "spell": "a072-2",
@@ -1123,9 +1323,17 @@
         "spell": "a075-1",
         "account": "a075",
         "start": 4,
+        "end": null,
+        "status": "active",
+        "known_at": 4
+      },
+      {
+        "spell": "a075-1",
+        "account": "a075",
+        "start": 4,
         "end": 8,
         "status": "ended",
-        "known_at": 4
+        "known_at": 8
       },
       {
         "spell": "a076-1",
@@ -1147,9 +1355,17 @@
         "spell": "a078-1",
         "account": "a078",
         "start": 7,
+        "end": null,
+        "status": "active",
+        "known_at": 7
+      },
+      {
+        "spell": "a078-1",
+        "account": "a078",
+        "start": 7,
         "end": 14,
         "status": "ended",
-        "known_at": 7
+        "known_at": 14
       },
       {
         "spell": "a078-2",

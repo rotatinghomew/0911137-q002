@@ -40,7 +40,7 @@ def run(data, options):
             if entry['kind'] not in {'charge', 'payment', 'refund'} or number(entry['amount']) < 0:
                 raise ValueError('账务类型或金额无效')
             totals[entry['kind']] += entry['amount']
-        spells = [row for row in data['spells'] if row['account'] == account['account'] and row['known_at'] <= cutoff and row['start'] <= cutoff]
+        spells = [row for row in latest(data['spells'], 'spell', 'known_at', 'known_at', cutoff) if row['account'] == account['account'] and row['start'] <= cutoff]
         active = any(row['end'] is None or row['end'] > cutoff for row in spells)
         rows.append(dict(account=account['account'], cohort=account['cohort'], cash=totals['payment'] - totals['refund'], charges=totals['charge'], payments=totals['payment'], refunds=totals['refund'], outstanding=totals['charge'] - totals['payment'], spells=len(spells), open_service=active))
     rows.sort(key=lambda row: (-row['cash'], row['account']))
