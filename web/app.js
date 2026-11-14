@@ -39,14 +39,21 @@ function table(container, rows) {
   container.append(grid);
 }
 
+function summaryList(container, entries) {
+  container.replaceChildren();
+  for (const [key, amount] of Object.entries(entries)) {
+    container.append(text('dt', key), text('dd', amount));
+  }
+}
+
+function notesList(container, notes) {
+  container.replaceChildren(...notes.map(note => text('li', note)));
+}
+
 function render(value, savedTitle = '') {
   current = value;
-  const summary = document.querySelector('#summary');
-  summary.replaceChildren();
-  for (const [key, amount] of Object.entries(value.result.summary)) {
-    summary.append(text('dt', key), text('dd', amount));
-  }
-  document.querySelector('#notes').replaceChildren(...value.result.notes.map(note => text('li', note)));
+  summaryList(document.querySelector('#summary'), value.result.summary);
+  notesList(document.querySelector('#notes'), value.result.notes);
   document.querySelector('#digest').textContent = `资料指纹：${value.digest}`;
   table(document.querySelector('#results'), value.result.rows);
   statusNode.textContent = savedTitle ? `正在查看保存的分析：${savedTitle}` : '分析已更新';
@@ -66,6 +73,76 @@ async function refresh() {
       current = null;
       statusNode.textContent = error.message;
     }
+  }
+}
+
+const accountColumns = ['account', 'cohort', 'state', 'tenure', 'expected_net_cash', 'p10', 'p50', 'p90', 'churn_probability', 'pause_probability', 'reactivation_probability', 'outstanding', 'contact_cost', 'decision_value', 'recommend_contact', 'causal_uplift'];
+const cohortColumns = ['cohort', 'accounts', 'excluded_observation', 'expected_net_cash', 'p10_total', 'p90_total', 'downside_risk', 'mean_churn_probability', 'outstanding_total', 'contact_count', 'contact_cost_total', 'decision_value_total'];
+
+function renderForecast(value) {
+  const result = value.result;
+  summaryList(document.querySelector('#forecast-summary'), result.summary);
+  notesList(document.querySelector('#forecast-notes'), result.notes);
+  table(document.querySelector('#forecast-accounts'), result.rows.map(row => Object.fromEntries(accountColumns.map(key => [key, row[key]]))));
+  table(document.querySelector('#forecast-cohorts'), result.cohorts.map(row => Object.fromEntries(cohortColumns.map(key => [key, row[key]]))));
+  table(document.querySelector('#forecast-excluded'), result.excluded);
+  document.querySelector('#forecast-filters').elements.cutoff.value = value.options.cutoff;
+  document.querySelector('#forecast-filters').elements.group.value = value.options.group;
+  statusNode.textContent = `预测已更新：未来${result.horizon}期，训练样本 ${result.training_samples} 条`;
+}
+
+async function runForecast(event) {
+  event.preventDefault();
+  const generation = ++requestGeneration;
+  const query = new URLSearchParams(new FormData(document.querySelector('#forecast-filters')));
+  statusNode.textContent = '正在预测';
+  try {
+    const value = await api(`/api/forecast?${query}`);
+    if (generation === requestGeneration) renderForecast(value);
+  } catch (error) {
+    statusNode.textContent = error.message;
+  }
+}
+
+function renderBacktest(value) {
+  const result = value.result;
+  summaryList(document.querySelector('#backtest-summary'), result.summary);
+  notesList(document.querySelector('#backtest-notes'), result.notes);
+  const foldRows = result.folds.map(fold => ({
+    cutoff: fold.cutoff,
+    training_samples: fold.training_samples,
+    evaluated: fold.evaluated,
+    excluded: fold.excluded,
+    mae: fold.mae,
+    bias: fold.bias,
+    coverage: fold.coverage,
+  }));
+  table(document.querySelector('#backtest-folds'), foldRows);
+  statusNode.textContent = `回测完成：${result.summary.fold_count} 个滚动时点`;
+}
+
+async function runBacktest(event) {
+  event.preventDefault();
+  const generation = ++requestGeneration;
+  const query = new URLSearchParams(new FormData(document.querySelector('#backtest-filters')));
+  statusNode.textContent = '正在回测';
+  try {
+    const value = await api(`/api/backtest?${query}`);
+    if (generation === requestGeneration) renderBacktest(value);
+  } catch (error) {
+    statusNode.textContent = error.message;
+  }
+}
+
+function wireTabs() {
+  const tabs = [['#tab-accounts', '#forecast-accounts'], ['#tab-cohorts', '#forecast-cohorts']];
+  for (const [buttonSelector, panelSelector] of tabs) {
+    document.querySelector(buttonSelector).addEventListener('click', () => {
+      for (const [otherButton, otherPanel] of tabs) {
+        document.querySelector(otherButton).classList.toggle('active', otherButton === buttonSelector);
+        document.querySelector(otherPanel).hidden = otherPanel !== panelSelector;
+      }
+    });
   }
 }
 
@@ -96,6 +173,10 @@ filters.addEventListener('submit', event => {
   refresh();
 });
 
+document.querySelector('#forecast-filters').addEventListener('submit', runForecast);
+document.querySelector('#backtest-filters').addEventListener('submit', runBacktest);
+wireTabs();
+
 document.querySelector('#save').addEventListener('submit', async event => {
   event.preventDefault();
   if (!current) return;
@@ -124,11 +205,30 @@ async function start() {
   filters.elements.cutoff.max = catalog.max_cutoff;
   filters.elements.cutoff.value = catalog.default_cutoff;
   const groups = [['', '全部'], ...catalog.groups.map(group => [group, group])];
-  for (const [key, label] of groups) {
-    const option = text('option', label);
-    option.value = key;
-    filters.elements.group.append(option);
+  for (const selectName of ['group']) {
+    for (const [key, label] of groups) {
+      const option = text('option', label);
+      option.value = key;
+      filters.elements[selectName].append(option);
+    }
   }
+  for (const formId of ['forecast-filters', 'backtest-filters']) {
+    const form = document.querySelector(`#${formId}`);
+    for (const [key, label] of groups) {
+      const option = text('option', label);
+      option.value = key;
+      form.elements.group.append(option);
+    }
+  }
+  const forecastForm = document.querySelector('#forecast-filters');
+  forecastForm.elements.cutoff.min = catalog.min_cutoff;
+  forecastForm.elements.cutoff.max = catalog.max_cutoff;
+  forecastForm.elements.cutoff.value = catalog.default_cutoff;
+  const backtestForm = document.querySelector('#backtest-filters');
+  backtestForm.elements.start.min = catalog.min_cutoff;
+  backtestForm.elements.start.value = catalog.min_cutoff + 6;
+  backtestForm.elements.end.max = catalog.max_cutoff;
+  backtestForm.elements.end.value = catalog.default_cutoff - 6;
   for (const name of Object.keys(catalog.tables)) {
     const option = text('option', `${name}（${catalog.tables[name]}）`);
     option.value = name;

@@ -7,6 +7,43 @@
 <form id="filters"><label>分析时点 <input name="cutoff" type="number" required></label><label>业务范围 <select name="group"></select></label><button type="submit">更新分析</button></form>
 <p id="status" role="status">正在读取资料</p>
 <section aria-label="当前分析"><h2>当前资料摘要</h2><dl id="summary"></dl><ul id="notes"></ul><p id="digest"></p><div id="results" class="scroll"></div></section>
+
+<section aria-label="未来半年价值分析">
+<h2>未来半年净回款预测与回访名单</h2>
+<form id="forecast-filters">
+  <label>预测时点 <input name="cutoff" type="number" required></label>
+  <label>业务范围 <select name="group"></select></label>
+  <label>单次回访成本（元） <input name="contact_cost" type="number" min="0" step="1" value="40" required></label>
+  <label>名单容量（可空） <input name="capacity" type="number" min="0" step="1" placeholder="不限"></label>
+  <button type="submit">运行预测</button>
+</form>
+<div class="tabs" role="tablist">
+  <button type="button" id="tab-accounts" class="tab active" role="tab">客户页</button>
+  <button type="button" id="tab-cohorts" class="tab" role="tab">获客批次页</button>
+</div>
+<dl id="forecast-summary"></dl>
+<div id="forecast-accounts" class="scroll tab-panel"></div>
+<div id="forecast-cohorts" class="scroll tab-panel" hidden></div>
+<h3>观察期不足，不输出点预测</h3>
+<div id="forecast-excluded" class="scroll"></div>
+<h3>口径与因果边界</h3>
+<ul id="forecast-notes"></ul>
+<p id="causal-banner" class="banner">回访因果增益：现有订阅历程与账务记录不含回访动作及结果，无法估计；以下回款均为无干预基线预测。</p>
+</section>
+
+<section aria-label="滚动回测">
+<h2>可回测验证</h2>
+<form id="backtest-filters">
+  <label>回测起点 <input name="start" type="number" required></label>
+  <label>回测终点 <input name="end" type="number" required></label>
+  <label>业务范围 <select name="group"></select></label>
+  <button type="submit">运行回测</button>
+</form>
+<dl id="backtest-summary"></dl>
+<div id="backtest-folds" class="scroll"></div>
+<ul id="backtest-notes"></ul>
+</section>
+
 <section aria-label="保存的分析"><h2>分析版本</h2><form id="save"><label>版本名称 <input name="title" required maxlength="100" value="经营讨论"></label><button type="submit">保存当前分析</button></form><ul id="history"></ul></section>
 <section aria-label="原始资料"><h2>资料查阅</h2><label>资料表 <select id="tables"></select></label><button id="source" type="button">查看资料</button><div id="raw" class="scroll"></div></section>
 </main><script src="/app.js" defer></script>

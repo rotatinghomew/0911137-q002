@@ -2,6 +2,7 @@ import argparse
 from functools import partial
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import math
 import os
 from pathlib import Path
 import threading
@@ -9,6 +10,9 @@ from urllib.parse import parse_qs, urlsplit
 from urllib.request import Request, urlopen
 
 from .domain import run
+from .forecast import HORIZON, MIN_OBSERVATION, eligible_accounts
+from .model import ValueModel
+from .strategy import cohort_summary, rank_outreach, run_backtest
 from .storage import AnalysisStore, read_dataset
 
 
@@ -45,6 +49,99 @@ class Application:
         result = run(data['tables'], options)
         return {'digest': digest, 'options': options, 'result': result}
 
+    def _validated_cutoff(self, data, supplied):
+        cutoff = supplied.get('cutoff', data['meta']['default_cutoff'])
+        try:
+            if isinstance(cutoff, bool) or float(cutoff) != int(cutoff):
+                raise ValueError()
+            cutoff = int(cutoff)
+        except (TypeError, ValueError, OverflowError):
+            raise ValueError('分析时点须为整数') from None
+        if not data['meta']['min_cutoff'] <= cutoff <= data['meta']['max_cutoff']:
+            raise ValueError('分析时点超出资料范围')
+        return cutoff
+
+    def forecast(self, supplied):
+        if not isinstance(supplied, dict) or set(supplied) - {'cutoff', 'group', 'contact_cost', 'capacity'}:
+            raise ValueError('预测只接受 cutoff、group、contact_cost、capacity 参数')
+        data, digest = read_dataset(self.dataset)
+        cutoff = self._validated_cutoff(data, supplied)
+        group = supplied.get('group', '')
+        if not isinstance(group, str) or group not in ['', *data['meta']['groups']]:
+            raise ValueError('未知分析范围')
+        contact_cost = supplied.get('contact_cost', '0')
+        try:
+            contact_cost = float(contact_cost)
+        except (TypeError, ValueError):
+            raise ValueError('回访成本须为数值') from None
+        if not math.isfinite(contact_cost) or contact_cost < 0:
+            raise ValueError('回访成本须为非负有限数值')
+        capacity = supplied.get('capacity')
+        if capacity not in (None, ''):
+            try:
+                if float(capacity) != int(float(capacity)):
+                    raise ValueError()
+                capacity = int(float(capacity))
+            except (TypeError, ValueError):
+                raise ValueError('名单容量须为非负整数') from None
+        else:
+            capacity = None
+        # 训练 cutoff 严格早于预测时点，保证不使用预测期及其之后的信息。
+        train_cutoffs = list(range(data['meta']['min_cutoff'], cutoff))
+        model, samples = ValueModel.train(data['tables'], train_cutoffs)
+        features_rows, excluded = eligible_accounts(data['tables'], cutoff)
+        if group:
+            features_rows = [row for row in features_rows if row['cohort'] == group]
+            excluded = [row for row in excluded if row['cohort'] == group]
+        rows = rank_outreach(model, features_rows, contact_cost, capacity)
+        cohorts = cohort_summary(rows, excluded)
+        result = {
+            'horizon': HORIZON,
+            'min_observation': MIN_OBSERVATION,
+            'training_samples': len(samples),
+            'training_cutoffs': train_cutoffs,
+            'rows': rows,
+            'cohorts': cohorts,
+            'excluded': [{'account': row['account'], 'cohort': row['cohort'], 'observation': row['observation'], 'reason': row['reason']} for row in excluded],
+            'summary': {
+                '可预测客户数': len(rows),
+                '观察期不足客户数': len(excluded),
+                '期望净回款合计': round(sum(row['expected_net_cash'] for row in rows), 4),
+                '建议回访客户数': sum(1 for row in rows if row['recommend_contact']),
+            },
+            'notes': [
+                '预测窗口为未来六个业务期；期望净回款为无回访干预基线，不含因果增益。',
+                '暂停不是终止；取消、到期不续、重新激活按服务期版本与账务事件分别识别。',
+                '未结清账单是应收差额，按付款滞后估计回收，不计为流失。',
+                '退款在 known_at 之后才可见，只影响该时点之后的预测。',
+                '回访名单按期望净回款减单次回访成本排序；现有记录无法估计回访的因果收益。',
+            ],
+        }
+        options = {'cutoff': cutoff, 'group': group, 'contact_cost': contact_cost, 'capacity': capacity}
+        return {'digest': digest, 'options': options, 'result': result}
+
+    def backtest(self, supplied):
+        if not isinstance(supplied, dict) or set(supplied) - {'start', 'end', 'group'}:
+            raise ValueError('回测只接受 start、end、group 参数')
+        data, digest = read_dataset(self.dataset)
+        start = self._validated_cutoff(data, {'cutoff': supplied.get('start', data['meta']['min_cutoff'])})
+        end = self._validated_cutoff(data, {'cutoff': supplied.get('end', data['meta']['default_cutoff'])})
+        if start > end:
+            raise ValueError('回测起点不能晚于终点')
+        group = supplied.get('group', '')
+        if not isinstance(group, str) or group not in ['', *data['meta']['groups']]:
+            raise ValueError('未知分析范围')
+        report = run_backtest(data['tables'], start, end)
+        if group:
+            fold_by_cutoff = {fold['cutoff']: fold for fold in report['folds']}
+            for cutoff in report['cutoffs']:
+                _, excluded = eligible_accounts(data['tables'], cutoff)
+                fold_by_cutoff[cutoff]['excluded'] = sum(1 for row in excluded if row['cohort'] == group)
+            for fold in report['folds']:
+                fold['rows'] = [row for row in fold['rows'] if row['cohort'] == group]
+                fold['evaluated'] = len(fold['rows'])
+        return {'digest': digest, 'options': {'start': start, 'end': end, 'group': group}, 'result': report}
+
 
 class Handler(BaseHTTPRequestHandler):
     def __init__(self, *args, application, **kwargs):
@@ -70,6 +167,10 @@ class Handler(BaseHTTPRequestHandler):
                 value = self.application.catalog()
             elif request.path == '/api/view':
                 value = self.application.analyze(query)
+            elif request.path == '/api/forecast':
+                value = self.application.forecast(query)
+            elif request.path == '/api/backtest':
+                value = self.application.backtest(query)
             elif request.path == '/api/analyses':
                 value = self.application.store.list()
             elif request.path.startswith('/api/analyses/'):

@@ -14,4 +14,10 @@ dt { font-weight: 600; } dd { margin: 0; font-size: 22px; }
 th,td { text-align: left; padding: 8px; border-bottom: 1px solid #d6e3e9; white-space: nowrap; }
 th { position: sticky; top: 0; background: #e4edf2; } #digest { overflow-wrap: anywhere; font-size: 12px; color: #456; }
 small { margin-left: 14px; color: #567; } li { margin: 7px 0; } #status { font-weight: 600; }
+.tabs { display: flex; gap: 8px; margin: 16px 0 8px; }
+.tab { border-bottom: 3px solid transparent; background: #eef3f6; }
+.tab.active { border-bottom-color: #153d52; background: #d8eaf3; font-weight: 700; }
+.tab-panel { margin-top: 8px; }
+.banner { background: #fff4e0; border: 1px solid #e0b96a; border-radius: 6px; padding: 10px 12px; font-size: 13px; }
+h3 { font-size: 15px; margin: 18px 0 8px; }
 @media (max-width: 600px) { dl { grid-template-columns: 1fr 1fr; } }

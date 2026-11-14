@@ -51,8 +51,29 @@ def main():
                 assert page.locator('#filters select').input_value() == catalog['groups'][0]
                 page.get_by_role('button', name='查看资料').click()
                 page.wait_for_selector('#raw tbody tr')
+                # 未来半年预测：客户页有行，成本变化改变建议名单但预测值不变。
+                page.get_by_role('button', name='运行预测').click()
+                page.wait_for_function("document.querySelector('#status').textContent.includes('预测已更新')")
+                page.wait_for_selector('#forecast-accounts tbody tr')
+                cheap_count = page.locator('#forecast-accounts tbody tr').count()
+                cheap_first = page.locator('#forecast-accounts tbody tr td').first.inner_text()
+                page.locator('#forecast-filters input[name="contact_cost"]').fill('500')
+                page.get_by_role('button', name='运行预测').click()
+                page.wait_for_function("document.querySelector('#status').textContent.includes('预测已更新')")
+                assert page.locator('#forecast-accounts tbody tr').count() == cheap_count
+                assert page.locator('#forecast-accounts tbody tr td').first.inner_text() == cheap_first
+                # 批次页切换后显示批次汇总，总额与客户页同源。
+                page.get_by_role('tab', name='获客批次页').click()
+                page.wait_for_selector('#forecast-cohorts tbody tr')
+                assert page.locator('#forecast-cohorts tbody tr').count() == len(catalog['groups'])
+                # 因果增益必须显式标注为不可估计。
+                assert '无法估计' in page.locator('#causal-banner').inner_text()
+                # 回测。
+                page.get_by_role('button', name='运行回测').click()
+                page.wait_for_selector('#backtest-folds tbody tr')
+                assert page.locator('#backtest-folds tbody tr').count() > 0
                 assert not errors, errors
-                print(json.dumps({'结果': '通过', '页面错误': errors, '保存范围': page.locator('#filters select').input_value()}, ensure_ascii=False))
+                print(json.dumps({'结果': '通过', '页面错误': errors, '保存范围': page.locator('#filters select').input_value(), '预测客户行': cheap_count}, ensure_ascii=False))
                 browser.close()
         finally:
             process.terminate()
